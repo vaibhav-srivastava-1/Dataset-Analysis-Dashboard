@@ -1,6 +1,11 @@
 """
-Streamlit Web Application for Data Science Analysis
-Automatically detects dataset type and runs all supervised learning algorithms
+Data Science Analysis Dashboard
+Author: Vaibhav Srivastava
+MCA AI and ML Student at Lovely Professional University (LPU)
+
+A comprehensive web application for analyzing datasets using various 
+supervised learning algorithms. Automatically detects regression or 
+classification problems and provides detailed analysis.
 """
 
 import streamlit as st
@@ -483,4 +488,9 @@ else:
     - Interactive visualizations
     - Model performance comparison
     - Detailed metrics and reports
+    
+    ---
+    
+    **Developed by Vaibhav Srivastava**  
+    MCA AI and ML Student at Lovely Professional University (LPU)
     """)

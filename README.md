@@ -207,10 +207,18 @@ This will generate synthetic datasets and save visualization PNG files.
 - **Memory errors**: Try with a smaller dataset or reduce test size
 - **Slow training**: Large datasets may take time; progress indicators will show status
 
+## 👨‍💻 About the Developer
+
+**Vaibhav Srivastava**  
+MCA AI and ML Student  
+Lovely Professional University (LPU)
+
+This project was developed as part of my academic coursework and personal learning in Data Science and Machine Learning. It demonstrates practical implementation of various supervised learning algorithms and their application to real-world datasets.
+
 ## 📄 License
 
 This project is open source and available for educational purposes.
 
 ## 🙏 Acknowledgments
 
-Built with Streamlit, Scikit-learn, and other amazing open-source libraries.
+Special thanks to the open-source community for providing excellent libraries like Streamlit, Scikit-learn, Pandas, and NumPy that made this project possible.
