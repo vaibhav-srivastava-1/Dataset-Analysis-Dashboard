@@ -25,7 +25,7 @@ from sklearn.metrics import (mean_squared_error, r2_score, accuracy_score,
 import warnings
 warnings.filterwarnings('ignore')
 
-# Page configuration
+# Page configuration - MUST be first Streamlit command
 st.set_page_config(
     page_title="Data Science Analysis Dashboard",
     page_icon="📊",
