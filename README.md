@@ -2,6 +2,13 @@
 
 A complete data science web application that automatically analyzes your datasets using various supervised learning algorithms. Built with Streamlit, NumPy, Pandas, Matplotlib, and Seaborn.
 
+## 🚀 Live Application
+
+**Try it now!** Visit the live application:  
+👉 **[https://dataset-analysis-dashboard-fu9b3uudzrpqq9pah66iag.streamlit.app/](https://dataset-analysis-dashboard-fu9b3uudzrpqq9pah66iag.streamlit.app/)**
+
+Upload your dataset and get instant analysis with all supervised learning models!
+
 ## 🌟 Overview
 
 This project provides an interactive web dashboard that:
