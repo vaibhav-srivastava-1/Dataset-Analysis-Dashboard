@@ -1,4 +1,4 @@
-# Comprehensive Data Science Project - Web Dashboard
+# Dataset Analysis Dashboard
 
 A complete data science web application that automatically analyzes your datasets using various supervised learning algorithms. Built with Streamlit, NumPy, Pandas, Matplotlib, and Seaborn.
 
