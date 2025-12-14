@@ -49,6 +49,29 @@ st.markdown("""
         border-radius: 0.5rem;
         margin: 0.5rem 0;
     }
+    .about-dashboard {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 1rem;
+        margin: 1.5rem 0;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border: 2px solid #5a67d8;
+    }
+    .about-dashboard h3 {
+        color: white;
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-top: 0;
+        margin-bottom: 1rem;
+    }
+    .about-dashboard p {
+        color: white;
+        font-size: 1.1rem;
+        line-height: 1.8;
+        margin-bottom: 0;
+        text-align: justify;
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -56,15 +79,19 @@ st.markdown("""
 st.markdown('<h1 class="main-header">📊 Data Science Analysis Dashboard</h1>',
             unsafe_allow_html=True)
 
-# Project Description
+# Project Description - Enhanced Visibility
 st.markdown("""
-<div style='background-color: #f0f2f6; padding: 1rem; border-radius: 0.5rem; margin: 1rem 0;'>
-    <h3 style='margin-top: 0;'>📖 About This Dashboard</h3>
-    <p style='margin-bottom: 0;'>
-        This interactive dashboard allows you to upload datasets, perform automatic data cleaning and preprocessing, 
-        explore data visually using interactive charts (histograms, boxplots, scatter plots, bar charts), and 
-        train multiple machine learning models to find the best one for your data. Perfect for both regression 
-        and classification problems!
+<div class="about-dashboard">
+    <h3>📖 About This Dashboard</h3>
+    <p>
+        <strong>Welcome!</strong> This interactive data science dashboard empowers you to analyze your datasets with ease. 
+        Upload your CSV or Excel files to automatically clean data, explore patterns through interactive visualizations 
+        (histograms, boxplots, scatter plots, bar charts), and train multiple machine learning models to find the best 
+        performing one for your specific dataset. Perfect for both <strong>regression</strong> and <strong>classification</strong> problems!
+    </p>
+    <p style='margin-top: 1rem; margin-bottom: 0;'>
+        <strong>Key Features:</strong> Automatic data cleaning • Multiple visualization types • 9 ML algorithms • 
+        Best model recommendation • Download cleaned datasets
     </p>
 </div>
 """, unsafe_allow_html=True)
@@ -697,41 +724,79 @@ if uploaded_file is not None:
                 st.balloons()
 
 else:
-    # Welcome screen
-    st.info("👆 Please upload a dataset file using the sidebar to get started!")
-
+    # Welcome screen - Enhanced readability
+    st.info("👆 **Get Started:** Upload a dataset file using the sidebar to begin your analysis!")
+    
+    st.markdown("---")
+    
+    # How to Use Section
     st.markdown("""
-    ### 📖 How to Use:
-    1. **Upload Dataset**: Use the sidebar to upload a CSV or Excel file
-    2. **Select Target**: Choose the column you want to predict
-    3. **Configure**: Adjust test size and random state if needed
-    4. **Run Analysis**: Click the "Run Analysis" button
-    5. **View Results**: Explore all visualizations and model comparisons
+    <div style='background-color: #e8f4f8; padding: 1.5rem; border-radius: 0.5rem; border-left: 4px solid #1f77b4; margin: 1rem 0;'>
+        <h3 style='color: #1f77b4; margin-top: 0;'>📖 How to Use This Dashboard</h3>
+        <ol style='font-size: 1.05rem; line-height: 2;'>
+            <li><strong>Upload Dataset:</strong> Use the sidebar to upload a CSV or Excel file</li>
+            <li><strong>Select Target:</strong> Choose the column you want to predict</li>
+            <li><strong>Configure:</strong> Adjust test size and random state if needed</li>
+            <li><strong>Explore Data:</strong> Use interactive visualizations to understand your data</li>
+            <li><strong>Run Analysis:</strong> Click the "Run Analysis" button to train all models</li>
+            <li><strong>View Results:</strong> Explore visualizations, model comparisons, and get recommendations</li>
+        </ol>
+    </div>
+    """, unsafe_allow_html=True)
     
-    ### 🎯 Supported Algorithms:
+    # Algorithms Section
+    col1, col2 = st.columns(2)
     
-    **Regression:**
-    - Linear Regression
-    - Polynomial Regression
-    - Ridge Regression
-    - Lasso Regression
+    with col1:
+        st.markdown("""
+        <div style='background-color: #fff4e6; padding: 1.5rem; border-radius: 0.5rem; border-left: 4px solid #ff9800; margin: 1rem 0;'>
+            <h4 style='color: #ff9800; margin-top: 0;'>📊 Regression Algorithms</h4>
+            <ul style='font-size: 1rem; line-height: 1.8;'>
+                <li>Linear Regression</li>
+                <li>Polynomial Regression</li>
+                <li>Ridge Regression</li>
+                <li>Lasso Regression</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
     
-    **Classification:**
-    - Logistic Regression
-    - K-Nearest Neighbors (KNN)
-    - Support Vector Machine (SVM)
-    - Decision Tree
-    - Random Forest
+    with col2:
+        st.markdown("""
+        <div style='background-color: #f3e5f5; padding: 1.5rem; border-radius: 0.5rem; border-left: 4px solid #9c27b0; margin: 1rem 0;'>
+            <h4 style='color: #9c27b0; margin-top: 0;'>🎯 Classification Algorithms</h4>
+            <ul style='font-size: 1rem; line-height: 1.8;'>
+                <li>Logistic Regression</li>
+                <li>K-Nearest Neighbors (KNN)</li>
+                <li>Support Vector Machine (SVM)</li>
+                <li>Decision Tree</li>
+                <li>Random Forest</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
     
-    ### 📊 Features:
-    - Automatic problem type detection (Regression/Classification)
-    - Automatic handling of missing values and categorical features
-    - Interactive visualizations
-    - Model performance comparison
-    - Detailed metrics and reports
+    # Features Section
+    st.markdown("""
+    <div style='background-color: #e8f5e9; padding: 1.5rem; border-radius: 0.5rem; border-left: 4px solid #4caf50; margin: 1rem 0;'>
+        <h4 style='color: #4caf50; margin-top: 0;'>✨ Key Features</h4>
+        <ul style='font-size: 1rem; line-height: 1.8;'>
+            <li><strong>Automatic Problem Detection:</strong> Automatically identifies regression vs classification</li>
+            <li><strong>Data Preprocessing:</strong> Handles missing values and categorical features automatically</li>
+            <li><strong>Interactive Visualizations:</strong> Multiple chart types (histogram, boxplot, scatter, bar chart, heatmap)</li>
+            <li><strong>Model Comparison:</strong> Compare all models side-by-side with detailed metrics</li>
+            <li><strong>Best Model Recommendation:</strong> Get AI-powered recommendations for your dataset</li>
+            <li><strong>Download Cleaned Data:</strong> Export your preprocessed dataset for further analysis</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
     
-    ---
+    st.markdown("---")
     
-    **Developed by Vaibhav Srivastava**  
-    MCA AI and ML Student at Lovely Professional University (LPU)
-    """)
+    # Developer Info
+    st.markdown("""
+    <div style='text-align: center; padding: 1rem; background-color: #f5f5f5; border-radius: 0.5rem; margin-top: 2rem;'>
+        <p style='margin: 0; font-size: 1rem;'>
+            <strong>Developed by Vaibhav Srivastava</strong><br>
+            MCA AI and ML Student at Lovely Professional University (LPU)
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
