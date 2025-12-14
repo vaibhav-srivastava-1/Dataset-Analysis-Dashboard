@@ -397,6 +397,59 @@ if uploaded_file is not None:
                     ax.grid(axis='x', alpha=0.3)
                     st.pyplot(fig)
 
+                    # Best Model Recommendation
+                    st.markdown("---")
+                    st.subheader("🏆 Best Model Recommendation")
+                    
+                    best_model = results_df.index[0]  # Highest R2 score
+                    best_metrics = results_df.iloc[0]
+                    
+                    col1, col2, col3 = st.columns(3)
+                    with col1:
+                        st.metric("Best Model", best_model)
+                    with col2:
+                        st.metric("R² Score", f"{best_metrics['R2']:.4f}")
+                    with col3:
+                        st.metric("MSE", f"{best_metrics['MSE']:.4f}")
+                    
+                    # Recommendation explanation
+                    st.info(f"""
+                    **🎯 Recommendation: Use {best_model}**
+                    
+                    This model performs best on your dataset with:
+                    - **R² Score**: {best_metrics['R2']:.4f} (closer to 1.0 is better)
+                    - **MSE**: {best_metrics['MSE']:.4f} (lower is better)
+                    - **MAE**: {best_metrics['MAE']:.4f} (lower is better)
+                    
+                    **Why this model?**
+                    - Highest R² score indicates best fit to your data
+                    - Lower error metrics mean more accurate predictions
+                    - Best balance between model complexity and performance
+                    """)
+                    
+                    # Model insights
+                    with st.expander("📊 Detailed Model Insights"):
+                        st.write("**Performance Ranking:**")
+                        for idx, (model, row) in enumerate(results_df.iterrows(), 1):
+                            if model == best_model:
+                                st.write(f"🥇 **{idx}. {model}** (Best) - R²: {row['R2']:.4f}, MSE: {row['MSE']:.4f}")
+                            else:
+                                st.write(f"{idx}. {model} - R²: {row['R2']:.4f}, MSE: {row['MSE']:.4f}")
+                        
+                        st.write("\n**Model Characteristics:**")
+                        if "Polynomial" in best_model:
+                            st.write("- Polynomial Regression captures non-linear relationships well")
+                            st.write("- Good for complex datasets with curved patterns")
+                        elif "Ridge" in best_model:
+                            st.write("- Ridge Regression handles multicollinearity effectively")
+                            st.write("- Prevents overfitting with L2 regularization")
+                        elif "Lasso" in best_model:
+                            st.write("- Lasso Regression performs feature selection automatically")
+                            st.write("- Useful when you have many features")
+                        else:
+                            st.write("- Linear Regression provides simple, interpretable results")
+                            st.write("- Best for linear relationships in your data")
+
                 else:  # Classification
                     results, predictions, X_test, y_test = run_classification_analysis(
                         X_encoded.values, y.values, test_size, random_state
@@ -443,6 +496,70 @@ if uploaded_file is not None:
                     ax.set_title('Classification Models - Accuracy Comparison')
                     ax.grid(axis='x', alpha=0.3)
                     st.pyplot(fig)
+
+                    # Best Model Recommendation
+                    st.markdown("---")
+                    st.subheader("🏆 Best Model Recommendation")
+                    
+                    best_model = results_df.index[0]  # Highest accuracy
+                    best_accuracy = results_df.iloc[0]['Accuracy']
+                    
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        st.metric("Best Model", best_model)
+                    with col2:
+                        st.metric("Accuracy", f"{best_accuracy:.4f} ({best_accuracy*100:.2f}%)")
+                    
+                    # Get detailed metrics for best model
+                    y_test_best, y_pred_best = predictions[best_model]
+                    cm_best = confusion_matrix(y_test_best, y_pred_best)
+                    report_best = classification_report(y_test_best, y_pred_best, output_dict=True)
+                    
+                    # Recommendation explanation
+                    st.info(f"""
+                    **🎯 Recommendation: Use {best_model}**
+                    
+                    This model performs best on your dataset with:
+                    - **Accuracy**: {best_accuracy:.4f} ({best_accuracy*100:.2f}%)
+                    - Best overall performance across all classes
+                    
+                    **Why this model?**
+                    - Highest accuracy means most correct predictions
+                    - Best generalization to new data
+                    - Optimal balance between precision and recall
+                    """)
+                    
+                    # Model insights
+                    with st.expander("📊 Detailed Model Insights"):
+                        st.write("**Performance Ranking:**")
+                        for idx, (model, row) in enumerate(results_df.iterrows(), 1):
+                            if model == best_model:
+                                st.write(f"🥇 **{idx}. {model}** (Best) - Accuracy: {row['Accuracy']:.4f} ({row['Accuracy']*100:.2f}%)")
+                            else:
+                                st.write(f"{idx}. {model} - Accuracy: {row['Accuracy']:.4f} ({row['Accuracy']*100:.2f}%)")
+                        
+                        st.write("\n**Best Model Performance Details:**")
+                        if len(report_best) > 3:  # Multiple classes
+                            for class_name, metrics in report_best.items():
+                                if class_name not in ['accuracy', 'macro avg', 'weighted avg']:
+                                    st.write(f"- **Class {class_name}**: Precision: {metrics['precision']:.3f}, Recall: {metrics['recall']:.3f}, F1: {metrics['f1-score']:.3f}")
+                        
+                        st.write("\n**Model Characteristics:**")
+                        if "Random Forest" in best_model:
+                            st.write("- Random Forest is robust and handles non-linear patterns well")
+                            st.write("- Less prone to overfitting, good for complex datasets")
+                        elif "SVM" in best_model:
+                            st.write("- SVM finds optimal decision boundaries")
+                            st.write("- Excellent for high-dimensional data")
+                        elif "Decision Tree" in best_model:
+                            st.write("- Decision Tree is interpretable and handles non-linear relationships")
+                            st.write("- Good for understanding feature importance")
+                        elif "KNN" in best_model:
+                            st.write("- KNN works well with local patterns in data")
+                            st.write("- Simple and effective for similar data points")
+                        else:
+                            st.write("- Logistic Regression provides interpretable results")
+                            st.write("- Best for linear decision boundaries")
 
                     # Detailed classification reports
                     st.subheader("📋 Detailed Classification Reports")
