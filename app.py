@@ -55,6 +55,19 @@ st.markdown("""
 # Title
 st.markdown('<h1 class="main-header">📊 Data Science Analysis Dashboard</h1>',
             unsafe_allow_html=True)
+
+# Project Description
+st.markdown("""
+<div style='background-color: #f0f2f6; padding: 1rem; border-radius: 0.5rem; margin: 1rem 0;'>
+    <h3 style='margin-top: 0;'>📖 About This Dashboard</h3>
+    <p style='margin-bottom: 0;'>
+        This interactive dashboard allows you to upload datasets, perform automatic data cleaning and preprocessing, 
+        explore data visually using interactive charts (histograms, boxplots, scatter plots, bar charts), and 
+        train multiple machine learning models to find the best one for your data. Perfect for both regression 
+        and classification problems!
+    </p>
+</div>
+""", unsafe_allow_html=True)
 st.markdown("---")
 
 # Sidebar for file upload
@@ -266,9 +279,16 @@ if uploaded_file is not None:
         with col3:
             st.metric("Missing Values", df.isnull().sum().sum())
 
-        # Show dataset preview
-        st.subheader("📋 Dataset Preview")
-        st.dataframe(df.head(10), use_container_width=True)
+        # Show dataset preview - Make it more prominent
+        st.subheader("📋 Dataset Preview (First 10 Rows)")
+        st.dataframe(df.head(10), use_container_width=True, height=300)
+        
+        # Show dataset info
+        with st.expander("📊 View Full Dataset Information"):
+            st.write(f"**Shape:** {df.shape[0]} rows × {df.shape[1]} columns")
+            st.write(f"**Columns:** {', '.join(df.columns.tolist())}")
+            st.write("**Data Types:**")
+            st.dataframe(df.dtypes.to_frame('Data Type'), use_container_width=True)
 
         # Select target column
         st.subheader("🎯 Select Target Column")
@@ -338,17 +358,121 @@ if uploaded_file is not None:
                 st.dataframe(df.describe(), use_container_width=True)
 
             # Data visualization
-            st.subheader("📊 Data Visualizations")
-
-            # Correlation heatmap
-            if X_encoded.shape[1] <= 20:  # Only show if not too many features
-                fig, ax = plt.subplots(figsize=(12, 8))
-                df_viz = X_encoded.copy()
-                df_viz['Target'] = y
-                sns.heatmap(df_viz.corr(), annot=True,
-                            cmap='coolwarm', center=0, ax=ax, fmt='.2f')
-                ax.set_title('Correlation Heatmap')
-                st.pyplot(fig)
+            st.subheader("📊 Interactive Data Visualizations")
+            
+            # Plot type selector
+            plot_type = st.selectbox(
+                "Select visualization type:",
+                ["Correlation Heatmap", "Box Plot (Outlier Detection)", "Scatter Plot", "Bar Chart", "Histogram"]
+            )
+            
+            if plot_type == "Correlation Heatmap":
+                if X_encoded.shape[1] <= 20:  # Only show if not too many features
+                    fig, ax = plt.subplots(figsize=(12, 8))
+                    df_viz = X_encoded.copy()
+                    df_viz['Target'] = y
+                    sns.heatmap(df_viz.corr(), annot=True,
+                                cmap='coolwarm', center=0, ax=ax, fmt='.2f')
+                    ax.set_title('Correlation Heatmap')
+                    st.pyplot(fig)
+                else:
+                    st.warning("⚠️ Correlation heatmap disabled for datasets with more than 20 features (performance).")
+            
+            elif plot_type == "Box Plot (Outlier Detection)":
+                numeric_cols = X.select_dtypes(include=[np.number]).columns.tolist()
+                if len(numeric_cols) > 0:
+                    selected_col = st.selectbox("Select column for box plot:", numeric_cols)
+                    fig, ax = plt.subplots(figsize=(10, 6))
+                    df[selected_col].plot(kind='box', ax=ax)
+                    ax.set_title(f'Box Plot: {selected_col} (Outlier Detection)')
+                    ax.set_ylabel('Value')
+                    st.pyplot(fig)
+                    # Show outliers
+                    Q1 = df[selected_col].quantile(0.25)
+                    Q3 = df[selected_col].quantile(0.75)
+                    IQR = Q3 - Q1
+                    outliers = df[(df[selected_col] < Q1 - 1.5*IQR) | (df[selected_col] > Q3 + 1.5*IQR)]
+                    if len(outliers) > 0:
+                        st.info(f"📊 Found {len(outliers)} potential outliers (using IQR method)")
+                else:
+                    st.warning("⚠️ No numeric columns available for box plot.")
+            
+            elif plot_type == "Scatter Plot":
+                numeric_cols = X.select_dtypes(include=[np.number]).columns.tolist()
+                if len(numeric_cols) >= 2:
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        x_col = st.selectbox("X-axis:", numeric_cols)
+                    with col2:
+                        y_col = st.selectbox("Y-axis:", numeric_cols, index=min(1, len(numeric_cols)-1))
+                    
+                    fig, ax = plt.subplots(figsize=(10, 6))
+                    ax.scatter(df[x_col], df[y_col], alpha=0.6, s=50)
+                    ax.set_xlabel(x_col)
+                    ax.set_ylabel(y_col)
+                    ax.set_title(f'Scatter Plot: {x_col} vs {y_col}')
+                    ax.grid(True, alpha=0.3)
+                    st.pyplot(fig)
+                else:
+                    st.warning("⚠️ Need at least 2 numeric columns for scatter plot.")
+            
+            elif plot_type == "Bar Chart":
+                categorical_cols = X.select_dtypes(include=['object']).columns.tolist()
+                if len(categorical_cols) > 0:
+                    selected_col = st.selectbox("Select categorical column:", categorical_cols)
+                    fig, ax = plt.subplots(figsize=(10, 6))
+                    value_counts = df[selected_col].value_counts().head(20)  # Limit to top 20
+                    value_counts.plot(kind='bar', ax=ax, color='steelblue')
+                    ax.set_title(f'Bar Chart: {selected_col}')
+                    ax.set_xlabel(selected_col)
+                    ax.set_ylabel('Count')
+                    ax.tick_params(axis='x', rotation=45)
+                    plt.tight_layout()
+                    st.pyplot(fig)
+                else:
+                    st.warning("⚠️ No categorical columns available for bar chart.")
+            
+            elif plot_type == "Histogram":
+                numeric_cols = X.select_dtypes(include=[np.number]).columns.tolist()
+                if len(numeric_cols) > 0:
+                    selected_col = st.selectbox("Select column for histogram:", numeric_cols)
+                    bins = st.slider("Number of bins:", 10, 100, 30)
+                    fig, ax = plt.subplots(figsize=(10, 6))
+                    ax.hist(df[selected_col].dropna(), bins=bins, edgecolor='black', alpha=0.7, color='steelblue')
+                    ax.set_title(f'Histogram: {selected_col}')
+                    ax.set_xlabel(selected_col)
+                    ax.set_ylabel('Frequency')
+                    st.pyplot(fig)
+                else:
+                    st.warning("⚠️ No numeric columns available for histogram.")
+            
+            # Download cleaned dataset
+            st.markdown("---")
+            st.subheader("💾 Download Cleaned Dataset")
+            
+            # Create cleaned dataset
+            df_cleaned = df.copy()
+            
+            # Fill missing values
+            for col in df_cleaned.columns:
+                if pd.api.types.is_numeric_dtype(df_cleaned[col]):
+                    df_cleaned[col].fillna(df_cleaned[col].median(), inplace=True)
+                else:
+                    df_cleaned[col].fillna(df_cleaned[col].mode()[0] if len(df_cleaned[col].mode()) > 0 else 'Unknown', inplace=True)
+            
+            # Convert to CSV
+            csv = df_cleaned.to_csv(index=False)
+            
+            st.download_button(
+                label="📥 Download Cleaned CSV",
+                data=csv,
+                file_name=f"cleaned_{uploaded_file.name}",
+                mime="text/csv",
+                use_container_width=True,
+                help="Download the dataset with missing values filled and ready for analysis"
+            )
+            
+            st.info("✅ The cleaned dataset has all missing values filled and is ready for further analysis!")
 
             # Run analysis
             if st.button("🚀 Run Analysis", type="primary", use_container_width=True):
