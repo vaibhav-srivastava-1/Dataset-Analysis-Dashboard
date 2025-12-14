@@ -35,64 +35,83 @@ st.set_page_config(
 
 # Custom CSS
 st.markdown("""
-    <style>
-    .main-header {
-        font-size: 3rem;
-        font-weight: bold;
-        text-align: center;
-        color: #1f77b4;
-        padding: 1rem;
-    }
-    .metric-card {
-        background-color: #f0f2f6;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        margin: 0.5rem 0;
-    }
-    .about-dashboard {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 2rem;
-        border-radius: 1rem;
-        margin: 1.5rem 0;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        border: 2px solid #5a67d8;
-    }
-    .about-dashboard h3 {
-        color: white;
-        font-size: 1.5rem;
-        font-weight: bold;
-        margin-top: 0;
-        margin-bottom: 1rem;
-    }
-    .about-dashboard p {
-        color: white;
-        font-size: 1.1rem;
-        line-height: 1.8;
-        margin-bottom: 0;
-        text-align: justify;
-    }
-    </style>
+<style>
+
+/* App background */
+.stApp {
+    background-color: #0e1117;
+    color: #e6edf3;
+}
+
+/* Main container padding */
+.block-container {
+    padding-top: 1.5rem;
+}
+
+/* Main title */
+.main-title {
+    font-size: 2.8rem;
+    font-weight: 800;
+    text-align: center;
+    color: #58a6ff;
+    margin-bottom: 1rem;
+}
+
+/* Reusable card */
+.card {
+    background-color: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 14px;
+    padding: 1.5rem;
+    margin-bottom: 1.2rem;
+}
+
+/* Card headings */
+.card h3 {
+    color: #58a6ff;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+/* Card text */
+.card p,
+.card li {
+    color: #c9d1d9;
+    font-size: 1.05rem;
+    line-height: 1.7;
+}
+
+/* Divider */
+hr {
+    border: none;
+    height: 1px;
+    background-color: #30363d;
+}
+
+</style>
 """, unsafe_allow_html=True)
 
+
 # Title
-st.markdown('<h1 class="main-header">📊 Data Science Analysis Dashboard</h1>',
-            unsafe_allow_html=True)
+st.markdown(
+    '<div class="main-title">📊 Data Science Analysis Dashboard</div>',
+    unsafe_allow_html=True
+)
+
 
 # Project Description - Enhanced Visibility
 st.markdown("""
-<div class="about-dashboard">
-    <h3>📖 About This Dashboard</h3>
-    <p>
-        <strong>Welcome!</strong> This interactive data science dashboard empowers you to analyze your datasets with ease. 
-        Upload your CSV or Excel files to automatically clean data, explore patterns through interactive visualizations 
-        (histograms, boxplots, scatter plots, bar charts), and train multiple machine learning models to find the best 
-        performing one for your specific dataset. Perfect for both <strong>regression</strong> and <strong>classification</strong> problems!
-    </p>
-    <p style='margin-top: 1rem; margin-bottom: 0;'>
-        <strong>Key Features:</strong> Automatic data cleaning • Multiple visualization types • 9 ML algorithms • 
-        Best model recommendation • Download cleaned datasets
-    </p>
+<div class="card">
+<h3>📖 About This Dashboard</h3>
+<p>
+This interactive data science dashboard allows you to upload datasets,
+automatically detect regression or vs classification problems, explore data
+visually, train multiple machine learning models, and compare results.
+</p>
+<p>
+<strong>Key Features:</strong> automated preprocessing, interactive plots,
+multiple ML algorithms, best model recommendation, and cleaned dataset download.
+</p>
 </div>
 """, unsafe_allow_html=True)
 st.markdown("---")
@@ -309,13 +328,14 @@ if uploaded_file is not None:
         # Show dataset preview - Make it more prominent
         st.subheader("📋 Dataset Preview (First 10 Rows)")
         st.dataframe(df.head(10), use_container_width=True, height=300)
-        
+
         # Show dataset info
         with st.expander("📊 View Full Dataset Information"):
             st.write(f"**Shape:** {df.shape[0]} rows × {df.shape[1]} columns")
             st.write(f"**Columns:** {', '.join(df.columns.tolist())}")
             st.write("**Data Types:**")
-            st.dataframe(df.dtypes.to_frame('Data Type'), use_container_width=True)
+            st.dataframe(df.dtypes.to_frame('Data Type'),
+                         use_container_width=True)
 
         # Select target column
         st.subheader("🎯 Select Target Column")
@@ -386,13 +406,14 @@ if uploaded_file is not None:
 
             # Data visualization
             st.subheader("📊 Interactive Data Visualizations")
-            
+
             # Plot type selector
             plot_type = st.selectbox(
                 "Select visualization type:",
-                ["Correlation Heatmap", "Box Plot (Outlier Detection)", "Scatter Plot", "Bar Chart", "Histogram"]
+                ["Correlation Heatmap",
+                    "Box Plot (Outlier Detection)", "Scatter Plot", "Bar Chart", "Histogram"]
             )
-            
+
             if plot_type == "Correlation Heatmap":
                 if X_encoded.shape[1] <= 20:  # Only show if not too many features
                     fig, ax = plt.subplots(figsize=(12, 8))
@@ -403,36 +424,44 @@ if uploaded_file is not None:
                     ax.set_title('Correlation Heatmap')
                     st.pyplot(fig)
                 else:
-                    st.warning("⚠️ Correlation heatmap disabled for datasets with more than 20 features (performance).")
-            
+                    st.warning(
+                        "⚠️ Correlation heatmap disabled for datasets with more than 20 features (performance).")
+
             elif plot_type == "Box Plot (Outlier Detection)":
-                numeric_cols = X.select_dtypes(include=[np.number]).columns.tolist()
+                numeric_cols = X.select_dtypes(
+                    include=[np.number]).columns.tolist()
                 if len(numeric_cols) > 0:
-                    selected_col = st.selectbox("Select column for box plot:", numeric_cols)
+                    selected_col = st.selectbox(
+                        "Select column for box plot:", numeric_cols)
                     fig, ax = plt.subplots(figsize=(10, 6))
                     df[selected_col].plot(kind='box', ax=ax)
-                    ax.set_title(f'Box Plot: {selected_col} (Outlier Detection)')
+                    ax.set_title(
+                        f'Box Plot: {selected_col} (Outlier Detection)')
                     ax.set_ylabel('Value')
                     st.pyplot(fig)
                     # Show outliers
                     Q1 = df[selected_col].quantile(0.25)
                     Q3 = df[selected_col].quantile(0.75)
                     IQR = Q3 - Q1
-                    outliers = df[(df[selected_col] < Q1 - 1.5*IQR) | (df[selected_col] > Q3 + 1.5*IQR)]
+                    outliers = df[(df[selected_col] < Q1 - 1.5*IQR)
+                                  | (df[selected_col] > Q3 + 1.5*IQR)]
                     if len(outliers) > 0:
-                        st.info(f"📊 Found {len(outliers)} potential outliers (using IQR method)")
+                        st.info(
+                            f"📊 Found {len(outliers)} potential outliers (using IQR method)")
                 else:
                     st.warning("⚠️ No numeric columns available for box plot.")
-            
+
             elif plot_type == "Scatter Plot":
-                numeric_cols = X.select_dtypes(include=[np.number]).columns.tolist()
+                numeric_cols = X.select_dtypes(
+                    include=[np.number]).columns.tolist()
                 if len(numeric_cols) >= 2:
                     col1, col2 = st.columns(2)
                     with col1:
                         x_col = st.selectbox("X-axis:", numeric_cols)
                     with col2:
-                        y_col = st.selectbox("Y-axis:", numeric_cols, index=min(1, len(numeric_cols)-1))
-                    
+                        y_col = st.selectbox(
+                            "Y-axis:", numeric_cols, index=min(1, len(numeric_cols)-1))
+
                     fig, ax = plt.subplots(figsize=(10, 6))
                     ax.scatter(df[x_col], df[y_col], alpha=0.6, s=50)
                     ax.set_xlabel(x_col)
@@ -441,14 +470,18 @@ if uploaded_file is not None:
                     ax.grid(True, alpha=0.3)
                     st.pyplot(fig)
                 else:
-                    st.warning("⚠️ Need at least 2 numeric columns for scatter plot.")
-            
+                    st.warning(
+                        "⚠️ Need at least 2 numeric columns for scatter plot.")
+
             elif plot_type == "Bar Chart":
-                categorical_cols = X.select_dtypes(include=['object']).columns.tolist()
+                categorical_cols = X.select_dtypes(
+                    include=['object']).columns.tolist()
                 if len(categorical_cols) > 0:
-                    selected_col = st.selectbox("Select categorical column:", categorical_cols)
+                    selected_col = st.selectbox(
+                        "Select categorical column:", categorical_cols)
                     fig, ax = plt.subplots(figsize=(10, 6))
-                    value_counts = df[selected_col].value_counts().head(20)  # Limit to top 20
+                    value_counts = df[selected_col].value_counts().head(
+                        20)  # Limit to top 20
                     value_counts.plot(kind='bar', ax=ax, color='steelblue')
                     ax.set_title(f'Bar Chart: {selected_col}')
                     ax.set_xlabel(selected_col)
@@ -457,39 +490,46 @@ if uploaded_file is not None:
                     plt.tight_layout()
                     st.pyplot(fig)
                 else:
-                    st.warning("⚠️ No categorical columns available for bar chart.")
-            
+                    st.warning(
+                        "⚠️ No categorical columns available for bar chart.")
+
             elif plot_type == "Histogram":
-                numeric_cols = X.select_dtypes(include=[np.number]).columns.tolist()
+                numeric_cols = X.select_dtypes(
+                    include=[np.number]).columns.tolist()
                 if len(numeric_cols) > 0:
-                    selected_col = st.selectbox("Select column for histogram:", numeric_cols)
+                    selected_col = st.selectbox(
+                        "Select column for histogram:", numeric_cols)
                     bins = st.slider("Number of bins:", 10, 100, 30)
                     fig, ax = plt.subplots(figsize=(10, 6))
-                    ax.hist(df[selected_col].dropna(), bins=bins, edgecolor='black', alpha=0.7, color='steelblue')
+                    ax.hist(df[selected_col].dropna(), bins=bins,
+                            edgecolor='black', alpha=0.7, color='steelblue')
                     ax.set_title(f'Histogram: {selected_col}')
                     ax.set_xlabel(selected_col)
                     ax.set_ylabel('Frequency')
                     st.pyplot(fig)
                 else:
-                    st.warning("⚠️ No numeric columns available for histogram.")
-            
+                    st.warning(
+                        "⚠️ No numeric columns available for histogram.")
+
             # Download cleaned dataset
             st.markdown("---")
             st.subheader("💾 Download Cleaned Dataset")
-            
+
             # Create cleaned dataset
             df_cleaned = df.copy()
-            
+
             # Fill missing values
             for col in df_cleaned.columns:
                 if pd.api.types.is_numeric_dtype(df_cleaned[col]):
-                    df_cleaned[col].fillna(df_cleaned[col].median(), inplace=True)
+                    df_cleaned[col].fillna(
+                        df_cleaned[col].median(), inplace=True)
                 else:
-                    df_cleaned[col].fillna(df_cleaned[col].mode()[0] if len(df_cleaned[col].mode()) > 0 else 'Unknown', inplace=True)
-            
+                    df_cleaned[col].fillna(df_cleaned[col].mode()[0] if len(
+                        df_cleaned[col].mode()) > 0 else 'Unknown', inplace=True)
+
             # Convert to CSV
             csv = df_cleaned.to_csv(index=False)
-            
+
             st.download_button(
                 label="📥 Download Cleaned CSV",
                 data=csv,
@@ -498,8 +538,9 @@ if uploaded_file is not None:
                 use_container_width=True,
                 help="Download the dataset with missing values filled and ready for analysis"
             )
-            
-            st.info("✅ The cleaned dataset has all missing values filled and is ready for further analysis!")
+
+            st.info(
+                "✅ The cleaned dataset has all missing values filled and is ready for further analysis!")
 
             # Run analysis
             if st.button("🚀 Run Analysis", type="primary", use_container_width=True):
@@ -551,10 +592,10 @@ if uploaded_file is not None:
                     # Best Model Recommendation
                     st.markdown("---")
                     st.subheader("🏆 Best Model Recommendation")
-                    
+
                     best_model = results_df.index[0]  # Highest R2 score
                     best_metrics = results_df.iloc[0]
-                    
+
                     col1, col2, col3 = st.columns(3)
                     with col1:
                         st.metric("Best Model", best_model)
@@ -562,7 +603,7 @@ if uploaded_file is not None:
                         st.metric("R² Score", f"{best_metrics['R2']:.4f}")
                     with col3:
                         st.metric("MSE", f"{best_metrics['MSE']:.4f}")
-                    
+
                     # Recommendation explanation
                     st.info(f"""
                     **🎯 Recommendation: Use {best_model}**
@@ -577,29 +618,38 @@ if uploaded_file is not None:
                     - Lower error metrics mean more accurate predictions
                     - Best balance between model complexity and performance
                     """)
-                    
+
                     # Model insights
                     with st.expander("📊 Detailed Model Insights"):
                         st.write("**Performance Ranking:**")
                         for idx, (model, row) in enumerate(results_df.iterrows(), 1):
                             if model == best_model:
-                                st.write(f"🥇 **{idx}. {model}** (Best) - R²: {row['R2']:.4f}, MSE: {row['MSE']:.4f}")
+                                st.write(
+                                    f"🥇 **{idx}. {model}** (Best) - R²: {row['R2']:.4f}, MSE: {row['MSE']:.4f}")
                             else:
-                                st.write(f"{idx}. {model} - R²: {row['R2']:.4f}, MSE: {row['MSE']:.4f}")
-                        
+                                st.write(
+                                    f"{idx}. {model} - R²: {row['R2']:.4f}, MSE: {row['MSE']:.4f}")
+
                         st.write("\n**Model Characteristics:**")
                         if "Polynomial" in best_model:
-                            st.write("- Polynomial Regression captures non-linear relationships well")
-                            st.write("- Good for complex datasets with curved patterns")
+                            st.write(
+                                "- Polynomial Regression captures non-linear relationships well")
+                            st.write(
+                                "- Good for complex datasets with curved patterns")
                         elif "Ridge" in best_model:
-                            st.write("- Ridge Regression handles multicollinearity effectively")
-                            st.write("- Prevents overfitting with L2 regularization")
+                            st.write(
+                                "- Ridge Regression handles multicollinearity effectively")
+                            st.write(
+                                "- Prevents overfitting with L2 regularization")
                         elif "Lasso" in best_model:
-                            st.write("- Lasso Regression performs feature selection automatically")
+                            st.write(
+                                "- Lasso Regression performs feature selection automatically")
                             st.write("- Useful when you have many features")
                         else:
-                            st.write("- Linear Regression provides simple, interpretable results")
-                            st.write("- Best for linear relationships in your data")
+                            st.write(
+                                "- Linear Regression provides simple, interpretable results")
+                            st.write(
+                                "- Best for linear relationships in your data")
 
                 else:  # Classification
                     results, predictions, X_test, y_test = run_classification_analysis(
@@ -651,21 +701,23 @@ if uploaded_file is not None:
                     # Best Model Recommendation
                     st.markdown("---")
                     st.subheader("🏆 Best Model Recommendation")
-                    
+
                     best_model = results_df.index[0]  # Highest accuracy
                     best_accuracy = results_df.iloc[0]['Accuracy']
-                    
+
                     col1, col2 = st.columns(2)
                     with col1:
                         st.metric("Best Model", best_model)
                     with col2:
-                        st.metric("Accuracy", f"{best_accuracy:.4f} ({best_accuracy*100:.2f}%)")
-                    
+                        st.metric(
+                            "Accuracy", f"{best_accuracy:.4f} ({best_accuracy*100:.2f}%)")
+
                     # Get detailed metrics for best model
                     y_test_best, y_pred_best = predictions[best_model]
                     cm_best = confusion_matrix(y_test_best, y_pred_best)
-                    report_best = classification_report(y_test_best, y_pred_best, output_dict=True)
-                    
+                    report_best = classification_report(
+                        y_test_best, y_pred_best, output_dict=True)
+
                     # Recommendation explanation
                     st.info(f"""
                     **🎯 Recommendation: Use {best_model}**
@@ -679,37 +731,47 @@ if uploaded_file is not None:
                     - Best generalization to new data
                     - Optimal balance between precision and recall
                     """)
-                    
+
                     # Model insights
                     with st.expander("📊 Detailed Model Insights"):
                         st.write("**Performance Ranking:**")
                         for idx, (model, row) in enumerate(results_df.iterrows(), 1):
                             if model == best_model:
-                                st.write(f"🥇 **{idx}. {model}** (Best) - Accuracy: {row['Accuracy']:.4f} ({row['Accuracy']*100:.2f}%)")
+                                st.write(
+                                    f"🥇 **{idx}. {model}** (Best) - Accuracy: {row['Accuracy']:.4f} ({row['Accuracy']*100:.2f}%)")
                             else:
-                                st.write(f"{idx}. {model} - Accuracy: {row['Accuracy']:.4f} ({row['Accuracy']*100:.2f}%)")
-                        
+                                st.write(
+                                    f"{idx}. {model} - Accuracy: {row['Accuracy']:.4f} ({row['Accuracy']*100:.2f}%)")
+
                         st.write("\n**Best Model Performance Details:**")
                         if len(report_best) > 3:  # Multiple classes
                             for class_name, metrics in report_best.items():
                                 if class_name not in ['accuracy', 'macro avg', 'weighted avg']:
-                                    st.write(f"- **Class {class_name}**: Precision: {metrics['precision']:.3f}, Recall: {metrics['recall']:.3f}, F1: {metrics['f1-score']:.3f}")
-                        
+                                    st.write(
+                                        f"- **Class {class_name}**: Precision: {metrics['precision']:.3f}, Recall: {metrics['recall']:.3f}, F1: {metrics['f1-score']:.3f}")
+
                         st.write("\n**Model Characteristics:**")
                         if "Random Forest" in best_model:
-                            st.write("- Random Forest is robust and handles non-linear patterns well")
-                            st.write("- Less prone to overfitting, good for complex datasets")
+                            st.write(
+                                "- Random Forest is robust and handles non-linear patterns well")
+                            st.write(
+                                "- Less prone to overfitting, good for complex datasets")
                         elif "SVM" in best_model:
                             st.write("- SVM finds optimal decision boundaries")
                             st.write("- Excellent for high-dimensional data")
                         elif "Decision Tree" in best_model:
-                            st.write("- Decision Tree is interpretable and handles non-linear relationships")
-                            st.write("- Good for understanding feature importance")
+                            st.write(
+                                "- Decision Tree is interpretable and handles non-linear relationships")
+                            st.write(
+                                "- Good for understanding feature importance")
                         elif "KNN" in best_model:
-                            st.write("- KNN works well with local patterns in data")
-                            st.write("- Simple and effective for similar data points")
+                            st.write(
+                                "- KNN works well with local patterns in data")
+                            st.write(
+                                "- Simple and effective for similar data points")
                         else:
-                            st.write("- Logistic Regression provides interpretable results")
+                            st.write(
+                                "- Logistic Regression provides interpretable results")
                             st.write("- Best for linear decision boundaries")
 
                     # Detailed classification reports
@@ -724,79 +786,79 @@ if uploaded_file is not None:
                 st.balloons()
 
 else:
-    # Welcome screen - Enhanced readability
-    st.info("👆 **Get Started:** Upload a dataset file using the sidebar to begin your analysis!")
-    
-    st.markdown("---")
-    
-    # How to Use Section
     st.markdown("""
-    <div style='background-color: #e8f4f8; padding: 1.5rem; border-radius: 0.5rem; border-left: 4px solid #1f77b4; margin: 1rem 0;'>
-        <h3 style='color: #1f77b4; margin-top: 0;'>📖 How to Use This Dashboard</h3>
-        <ol style='font-size: 1.05rem; line-height: 2;'>
-            <li><strong>Upload Dataset:</strong> Use the sidebar to upload a CSV or Excel file</li>
-            <li><strong>Select Target:</strong> Choose the column you want to predict</li>
-            <li><strong>Configure:</strong> Adjust test size and random state if needed</li>
-            <li><strong>Explore Data:</strong> Use interactive visualizations to understand your data</li>
-            <li><strong>Run Analysis:</strong> Click the "Run Analysis" button to train all models</li>
-            <li><strong>View Results:</strong> Explore visualizations, model comparisons, and get recommendations</li>
-        </ol>
+    <div class="card">
+    <h3>👋 Welcome</h3>
+    <p>
+    Upload a CSV or Excel dataset from the sidebar to begin analysis.
+    This dashboard will automatically detect whether your problem is
+    regression or classification and run multiple machine learning models.
+    </p>
     </div>
     """, unsafe_allow_html=True)
-    
-    # Algorithms Section
+
+    st.markdown("""
+    <div class="card">
+    <h3>📖 How to Use</h3>
+    <ol>
+        <li>Upload a dataset (CSV / Excel)</li>
+        <li>Select the target column</li>
+        <li>Adjust test size and random state (optional)</li>
+        <li>Explore visualizations</li>
+        <li>Click <strong>Run Analysis</strong></li>
+    </ol>
+    </div>
+    """, unsafe_allow_html=True)
+
     col1, col2 = st.columns(2)
-    
+
     with col1:
         st.markdown("""
-        <div style='background-color: #fff4e6; padding: 1.5rem; border-radius: 0.5rem; border-left: 4px solid #ff9800; margin: 1rem 0;'>
-            <h4 style='color: #ff9800; margin-top: 0;'>📊 Regression Algorithms</h4>
-            <ul style='font-size: 1rem; line-height: 1.8;'>
-                <li>Linear Regression</li>
-                <li>Polynomial Regression</li>
-                <li>Ridge Regression</li>
-                <li>Lasso Regression</li>
-            </ul>
+        <div class="card">
+        <h3>📊 Regression Algorithms</h3>
+        <ul>
+            <li>Linear Regression</li>
+            <li>Polynomial Regression</li>
+            <li>Ridge Regression</li>
+            <li>Lasso Regression</li>
+        </ul>
         </div>
         """, unsafe_allow_html=True)
-    
+
     with col2:
         st.markdown("""
-        <div style='background-color: #f3e5f5; padding: 1.5rem; border-radius: 0.5rem; border-left: 4px solid #9c27b0; margin: 1rem 0;'>
-            <h4 style='color: #9c27b0; margin-top: 0;'>🎯 Classification Algorithms</h4>
-            <ul style='font-size: 1rem; line-height: 1.8;'>
-                <li>Logistic Regression</li>
-                <li>K-Nearest Neighbors (KNN)</li>
-                <li>Support Vector Machine (SVM)</li>
-                <li>Decision Tree</li>
-                <li>Random Forest</li>
-            </ul>
+        <div class="card">
+        <h3>🎯 Classification Algorithms</h3>
+        <ul>
+            <li>Logistic Regression</li>
+            <li>K-Nearest Neighbors (KNN)</li>
+            <li>Support Vector Machine (SVM)</li>
+            <li>Decision Tree</li>
+            <li>Random Forest</li>
+        </ul>
         </div>
         """, unsafe_allow_html=True)
-    
-    # Features Section
+
     st.markdown("""
-    <div style='background-color: #e8f5e9; padding: 1.5rem; border-radius: 0.5rem; border-left: 4px solid #4caf50; margin: 1rem 0;'>
-        <h4 style='color: #4caf50; margin-top: 0;'>✨ Key Features</h4>
-        <ul style='font-size: 1rem; line-height: 1.8;'>
-            <li><strong>Automatic Problem Detection:</strong> Automatically identifies regression vs classification</li>
-            <li><strong>Data Preprocessing:</strong> Handles missing values and categorical features automatically</li>
-            <li><strong>Interactive Visualizations:</strong> Multiple chart types (histogram, boxplot, scatter, bar chart, heatmap)</li>
-            <li><strong>Model Comparison:</strong> Compare all models side-by-side with detailed metrics</li>
-            <li><strong>Best Model Recommendation:</strong> Get AI-powered recommendations for your dataset</li>
-            <li><strong>Download Cleaned Data:</strong> Export your preprocessed dataset for further analysis</li>
-        </ul>
+    <div class="card">
+    <h3>✨ Key Features</h3>
+    <ul>
+        <li>Automatic problem type detection</li>
+        <li>Missing value handling</li>
+        <li>Categorical feature encoding</li>
+        <li>Interactive visualizations</li>
+        <li>Multiple ML models comparison</li>
+        <li>Best model recommendation</li>
+        <li>Download cleaned dataset</li>
+    </ul>
     </div>
     """, unsafe_allow_html=True)
-    
-    st.markdown("---")
-    
-    # Developer Info
+
     st.markdown("""
-    <div style='text-align: center; padding: 1rem; background-color: #f5f5f5; border-radius: 0.5rem; margin-top: 2rem;'>
-        <p style='margin: 0; font-size: 1rem;'>
-            <strong>Developed by Vaibhav Srivastava</strong><br>
-            MCA AI and ML Student at Lovely Professional University (LPU)
-        </p>
+    <div class="card" style="text-align:center;">
+    <p>
+    <strong>Developed by Vaibhav Srivastava</strong><br>
+    MCA AI & ML · Lovely Professional University
+    </p>
     </div>
     """, unsafe_allow_html=True)
