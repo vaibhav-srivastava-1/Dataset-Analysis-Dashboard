@@ -214,6 +214,22 @@ This will generate synthetic datasets and save visualization PNG files.
 - **Memory errors**: Try with a smaller dataset or reduce test size
 - **Slow training**: Large datasets may take time; progress indicators will show status
 
+### 😴 App Goes to Sleep After Inactivity
+
+**If deployed on Streamlit Cloud (Free Tier):**
+- Streamlit Cloud free tier apps automatically sleep after ~1 hour of inactivity
+- This is a platform limitation and cannot be prevented programmatically
+- **Solutions:**
+  - Upgrade to Streamlit Cloud paid plan for always-on apps
+  - Use external monitoring services (e.g., UptimeRobot) to ping your app every few minutes
+  - Deploy to alternative platforms like Heroku, Railway, or Render with always-on options
+
+**If running locally:**
+- The app should not sleep, but session timeouts may occur
+- A keep-alive mechanism has been added to the code
+- The `.streamlit/config.toml` file extends timeout settings
+- Keep the browser tab active and interact with the app periodically
+
 ## 👨‍💻 About the Developer
 
 **Vaibhav Srivastava**  
